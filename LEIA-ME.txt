@@ -1,0 +1,21 @@
+# Meu Controle de Parcelas — versão PWA
+
+Esta pasta contém a versão instalável como aplicativo.
+
+Arquivos:
+- index.html — aplicativo
+- manifest.json — configuração do aplicativo
+- sw.js — funcionamento offline/cache
+- icon-192.png e icon-512.png — ícones
+
+IMPORTANTE:
+Para instalar como PWA no Android, os arquivos precisam ser publicados em um endereço HTTPS.
+Abrir apenas o arquivo HTML localmente não oferece todos os recursos de instalação de um PWA.
+
+Depois de publicar:
+1. Abra o endereço no Chrome do Android.
+2. Use o menu ⋮.
+3. Escolha "Adicionar à tela inicial" ou "Instalar aplicativo", conforme aparecer.
+4. O aplicativo abrirá em modo independente, sem a barra normal do navegador.
+
+Os dados continuam sendo armazenados localmente no navegador/app. Use "Exportar backup" dentro de Configurações para manter uma cópia.

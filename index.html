@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2457d6">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<title>Controle Financeiro de Parcelas</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#1f2937;--muted:#64748b;--primary:#2457d6;--primary2:#173f9c;--ok:#16834b;--warn:#b7791f;--danger:#c53030;--line:#e5e7eb;--soft:#eef2ff}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);transition:.2s}
+body.dark{--bg:#0f172a;--card:#172033;--text:#e5e7eb;--muted:#94a3b8;--line:#334155;--soft:#202d49}
+body.reggae{--bg:#fffbea;--card:#fffdf5;--text:#173b22;--muted:#596b58;--primary:#198754;--primary2:#0f5d36;--line:#d9dfbf;--soft:#fff1a8}
+body.reggae header{background:linear-gradient(135deg,#087a3b 0%,#087a3b 42%,#f2c300 42%,#f2c300 68%,#d62f2f 68%,#d62f2f 100%);color:#fff}
+body.reggae .tab.active{background:#198754}
+body.reggae .progress span,.body.reggae .cardbar span{background:#198754}
+header{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;padding:22px 14px 24px;position:sticky;top:0;z-index:10}.wrap{max-width:1080px;margin:auto;padding:0 12px}h1{margin:0 0 5px;font-size:23px}header p{margin:0;opacity:.9;font-size:13px}
+nav{display:flex;gap:7px;overflow-x:auto;padding:10px 0;position:sticky;top:88px;z-index:9;background:var(--bg)}.tab{border:0;background:var(--card);padding:10px 13px;border-radius:12px;cursor:pointer;font-weight:700;color:var(--text);white-space:nowrap;box-shadow:0 1px 4px #0000000b}.tab.active{background:var(--primary);color:#fff}
+main{padding:5px 0 40px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.stat,.panel,.purchase{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 2px 8px #0f172a0a}.stat small{color:var(--muted);display:block;font-size:12px}.stat strong{font-size:18px;display:block;margin-top:5px}.section{margin-top:13px}.section h2,.panel h2{font-size:17px;margin:0 0 10px}
+button.primary{background:var(--primary);color:white;border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}.danger{background:#fee2e2;color:#991b1b;border:0;border-radius:9px;padding:8px;cursor:pointer}.secondary{background:var(--soft);color:var(--primary2);border:0;border-radius:9px;padding:8px 10px;cursor:pointer}
+body.dark .danger{background:#4b2024;color:#fecaca}
+form{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}label{font-size:13px;font-weight:700;color:var(--muted)}input,select{width:100%;margin-top:5px;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:var(--card);color:var(--text);font:inherit}.full{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.hidden{display:none!important}.cards,.purchases{display:grid;gap:10px}.cardrow,.phead{display:flex;justify-content:space-between;align-items:center;gap:10px}.cardrow{padding:12px;border:1px solid var(--line);border-radius:12px}.muted{color:var(--muted);font-size:13px}.money{font-weight:800}
+.purchase{padding:14px}.purchase h3{margin:0 0 5px}.badge{font-size:12px;background:var(--soft);color:var(--primary2);border-radius:999px;padding:4px 8px}.progress{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:11px 0}.progress span{display:block;height:100%;background:var(--primary)}.installments{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.inst{border:1px solid var(--line);border-radius:10px;padding:9px;background:var(--bg);cursor:pointer}.inst.paid{background:#ecfdf5;border-color:#a7f3d0}.inst b{display:block;font-size:12px}.inst span{font-size:12px;color:var(--muted)}.monthrow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}.note{padding:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;color:#854d0e;font-size:13px}
+.setting{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.setting:last-child{border-bottom:0}.setting b{font-size:14px}.setting small{display:block;color:var(--muted);font-weight:400;margin-top:3px}.switch{position:relative;width:46px;height:25px;display:inline-block}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#94a3b8;border-radius:30px;cursor:pointer}.slider:before{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.switch input:checked+.slider{background:var(--primary)}.switch input:checked+.slider:before{transform:translateX(21px)}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}.installments{grid-template-columns:repeat(4,1fr)}} 
+@media(max-width:520px){form{grid-template-columns:1fr}.full{grid-column:auto}.phead{align-items:flex-start}.wrap{padding-left:10px;padding-right:10px}header{position:relative}nav{top:0}}
+.cardbar{height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:7px}.cardbar span{display:block;height:100%;background:var(--primary)}.status-ok{color:#16834b}.status-att{color:#b7791f}.status-high{color:#c05621}.status-danger{color:#c53030}
+@media(max-width:520px){.cardrow{align-items:flex-start}.cardrow .actions{flex-direction:column}.cardrow button{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1 id="appTitle">💳 Meu Controle de Parcelas</h1><p id="appSubtitle">Acompanhe cartões, compras parceladas, parcelas restantes e impacto no orçamento.</p></div></header>
+<div class="wrap">
+<nav>
+<button class="tab active" onclick="show('inicio',this)">Resumo</button>
+<button class="tab" onclick="show('compras',this)">Compras</button>
+<button class="tab" onclick="show('cartoes',this)">Cartões</button>
+<button class="tab" onclick="show('config',this)">⚙️ Configurações</button>
+</nav>
+<main>
+<section id="inicio">
+<div class="grid">
+<div class="stat"><small>Renda mensal</small><strong id="sRenda">R$ 0,00</strong></div>
+<div class="stat"><small>Parcelas deste mês</small><strong id="sMes">R$ 0,00</strong></div>
+<div class="stat"><small>Parcelas restantes</small><strong id="sRestantes">0</strong></div>
+<div class="stat"><small>Impacto na renda</small><strong id="sImpacto">0%</strong></div>
+</div>
+<div class="section panel"><div class="phead"><div><h2 style="margin:0">🗓️ Este mês</h2><div class="muted" id="mesAtualLabel"></div></div><span class="badge" id="mesStatus">—</span></div>
+<div class="grid" style="margin-top:10px">
+<div><small class="muted">A pagar</small><div class="money" id="mesPagar">R$ 0,00</div></div>
+<div><small class="muted">Já pago</small><div class="money" id="mesPago">R$ 0,00</div></div>
+<div><small class="muted">Total previsto</small><div class="money" id="mesTotal">R$ 0,00</div></div>
+<div><small class="muted">% da renda</small><div class="money" id="mesPct">—</div></div>
+</div></div>
+<div class="section panel" id="situacaoPanel">
+  <div class="phead"><div><h2 style="margin:0">📊 Situação do orçamento</h2><div class="muted" id="situacaoTexto">Cadastre sua renda para acompanhar.</div></div><span class="badge" id="situacaoBadge">Sem dados</span></div>
+  <div class="progress" style="height:11px;margin-top:12px"><span id="situacaoBar" style="width:0%"></span></div>
+  <div class="muted">Regra de referência: até 20% confortável • 20–30% atenção • 30–40% elevado • acima de 40% alto.</div>
+</div>
+<div class="section panel"><h2>🔁 Despesas fixas mensais</h2><div class="monthrow"><span>Total mensal</span><b id="fixasTotal">R$ 0,00</b></div><div class="muted">Ex.: assinaturas, mensalidades ou outros gastos recorrentes que não terminam em uma parcela específica.</div></div>
+<div class="section panel"><h2>💳 Limites dos cartões</h2><div id="limitesCartoes"></div></div>
+<div class="section panel"><h2>📅 Compromissos por mês</h2><div id="meses"></div></div>
+<div class="section panel"><h2>💳 Comprometimento por cartão</h2><div id="porCartao"></div></div>
+<div class="section note">Clique em uma parcela para alternar entre <b>pendente</b> e <b>paga</b>. Os dados ficam salvos neste navegador.</div>
+</section>
+
+<section id="compras" class="hidden">
+<div class="panel">
+<div class="phead"><h2>Adicionar compra</h2></div>
+<form onsubmit="addPurchase(event)">
+<label>Nome da compra<input id="nome" required placeholder="Ex.: Samsung Galaxy A56"></label>
+<label>Cartão<select id="cartao"></select></label>
+<label>Valor total (R$)<input id="valor" type="number" min="0" step=".01" required></label>
+<label>Número de parcelas<input id="nparc" type="number" min="1" required value="10"></label>
+<label>1ª parcela<input id="primeira" type="month" required></label>
+<label>Dia de vencimento<input id="dia" type="number" min="1" max="31" value="10" required></label>
+<label>Tipo
+<select id="tipo"><option value="parcelada">Compra parcelada</option><option value="fixa">Despesa fixa mensal</option></select></label>
+<label class="full">Observação<input id="obs" placeholder="Opcional"></label>
+<div class="full actions"><button class="primary">+ Adicionar compra</button></div>
+</form>
+</div>
+<div class="section"><h2>🧾 Compras cadastradas</h2><div id="listaCompras" class="purchases"></div></div>
+</section>
+
+<section id="cartoes" class="hidden">
+<div class="panel"><h2>Adicionar cartão</h2>
+<form onsubmit="addCard(event)">
+<label>Nome do cartão<input id="novoCartao" required placeholder="Ex.: Nubank"></label>
+<label>Limite (R$)<input id="limite" type="number" min="0" step=".01" placeholder="Opcional"></label>
+<div class="full actions"><button class="primary">+ Adicionar cartão</button></div>
+</form></div>
+<div class="section panel"><h2>💳 Meus cartões</h2><div id="listaCartoes" class="cards"></div></div>
+</section>
+
+<section id="config" class="hidden">
+<div class="panel"><h2>⚙️ Personalização</h2>
+<form onsubmit="saveSettings(event)">
+<label>Título do painel<input id="titulo" maxlength="45"></label>
+<label>Subtítulo<input id="subtitulo" maxlength="90"></label>
+<label>Tema
+<select id="tema" onchange="previewTheme()"><option value="light">Claro</option><option value="dark">Escuro</option><option value="reggae">Reggae 🌿</option><option value="auto">Automático</option></select></label>
+<label>Cor principal
+<input id="cor" type="color" style="height:42px;padding:4px"></label>
+<label class="full">Renda mensal (R$)<input id="renda" type="number" min="0" step=".01"></label>
+<div class="full actions"><button class="primary">Salvar personalização</button></div>
+</form>
+</div>
+<div class="section panel"><h2>🔔 Preferências</h2>
+<div class="setting"><div><b>Destacar parcelas próximas</b><small>Realça compromissos do mês atual.</small></div><label class="switch"><input id="destaque" type="checkbox" checked onchange="savePrefs()"><span class="slider"></span></label></div>
+<div class="setting"><div><b>Mostrar resumo por cartão</b><small>Exibe o comprometimento separado por cartão.</small></div><label class="switch"><input id="resumoCartao" type="checkbox" checked onchange="savePrefs()"><span class="slider"></span></label></div>
+</div>
+<div class="section panel"><h2>🛠️ Dados</h2>
+<div class="actions">
+<button class="secondary" onclick="exportData()">Exportar backup</button>
+<button class="secondary" onclick="document.getElementById('importFile').click()">Importar backup</button>
+<input id="importFile" type="file" accept=".json" class="hidden" onchange="importData(event)">
+<button class="danger" onclick="resetData()">Apagar todos os dados</button>
+</div>
+<p class="muted">O backup permite levar seus cartões e compras para outro aparelho.</p>
+</div>
+</section>
+</main>
+</div>
+<script>
+const KEY='controleParcelas_v1';
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
+ income:0,
+ settings:{title:'💳 Meu Controle de Parcelas',subtitle:'Acompanhe cartões, compras parceladas, parcelas restantes e impacto no orçamento.',theme:'light',color:'#2457d6',highlight:true,cardSummary:true},
+ cards:[{id:crypto.randomUUID(),name:'Cartão 1',limit:0},{id:crypto.randomUUID(),name:'Cartão 2',limit:0},{id:crypto.randomUUID(),name:'Cartão 3',limit:0}],
+ purchases:[]
+};
+db.settings=db.settings||{title:'💳 Meu Controle de Parcelas',subtitle:'Acompanhe cartões, compras parceladas, parcelas restantes e impacto no orçamento.',theme:'light',color:'#2457d6',highlight:true,cardSummary:true};
+db.settings.highlight=db.settings.highlight!==false;
+db.settings.cardSummary=db.settings.cardSummary!==false;
+function applyTheme(){
+ const s=db.settings; document.getElementById('appTitle').textContent=s.title; document.getElementById('appSubtitle').textContent=s.subtitle;
+ document.documentElement.style.setProperty('--primary',s.color||'#2457d6');
+ document.body.classList.remove('dark','reggae');
+if(s.theme==='dark'||(s.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches)) document.body.classList.add('dark');
+if(s.theme==='reggae') document.body.classList.add('reggae');
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(db)); render();}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function ym(d){return d.toISOString().slice(0,7);}
+function labelMonth(s){let [y,m]=s.split('-');return new Date(y,m-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});}
+function installments(p){let out=[];let [y,m]=p.first.split('-').map(Number);let count=p.type==='fixa'?120:Number(p.n);let val=p.type==='fixa'?Number(p.total):Number(p.total)/Number(p.n);for(let i=0;i<count;i++){let dt=new Date(y,m-1+i,Math.min(Number(p.day),28));out.push({key:p.id+'_'+i,month:ym(dt),value:val,paid:!!p.paid?.[i],n:i+1});}return out;}
+function allInst(){return db.purchases.flatMap(p=>installments(p).map(x=>({...x,p})));}
+
+function previewTheme(){
+ const v=document.getElementById('tema').value;
+ document.body.classList.remove('dark','reggae');
+if(v==='dark'||(v==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches)) document.body.classList.add('dark');
+if(v==='reggae') document.body.classList.add('reggae');
+}
+function saveSettings(e){
+ e.preventDefault();
+ db.settings.title=document.getElementById('titulo').value||'💳 Meu Controle de Parcelas';
+ db.settings.subtitle=document.getElementById('subtitulo').value||'Acompanhe seus compromissos financeiros.';
+ db.settings.theme=document.getElementById('tema').value;
+ db.settings.color=document.getElementById('cor').value;
+ db.income=Number(document.getElementById('renda').value||0);
+ save(); alert('Configurações salvas.');
+}
+function savePrefs(){
+ db.settings.highlight=document.getElementById('destaque').checked;
+ db.settings.cardSummary=document.getElementById('resumoCartao').checked;
+ save();
+}
+function loadSettingsUI(){
+ document.getElementById('titulo').value=db.settings.title;
+ document.getElementById('subtitulo').value=db.settings.subtitle;
+ document.getElementById('tema').value=db.settings.theme;
+ document.getElementById('cor').value=db.settings.color;
+ document.getElementById('renda').value=db.income||'';
+ document.getElementById('destaque').checked=db.settings.highlight;
+ document.getElementById('resumoCartao').checked=db.settings.cardSummary;
+}
+function exportData(){
+ const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-controle-parcelas.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){
+ const file=e.target.files[0];if(!file)return;
+ const reader=new FileReader();reader.onload=()=>{try{const x=JSON.parse(reader.result);if(!x.cards||!x.purchases)throw 0;db=x;db.settings=db.settings||{};save();loadSettingsUI();alert('Backup importado com sucesso.')}catch{alert('Arquivo de backup inválido.')}};reader.readAsText(file);
+}
+function resetData(){if(confirm('Isso apagará cartões, compras e configurações deste navegador. Continuar?')){localStorage.removeItem(KEY);location.reload();}}
+function render(){
+ applyTheme();
+ document.getElementById('sRenda').textContent=money(db.income);
+ let all=allInst(), pending=all.filter(x=>!x.paid), now=ym(new Date());
+ let thisMonth=all.filter(x=>x.month===now&&!x.paid).reduce((a,x)=>a+x.value,0);
+ let monthPaid=all.filter(x=>x.month===now&&x.paid).reduce((a,x)=>a+x.value,0);
+ let monthTotal=thisMonth+monthPaid;
+ let fixedTotal=db.purchases.filter(p=>p.type==='fixa').reduce((a,p)=>a+Number(p.total),0);
+ document.getElementById('sMes').textContent=money(thisMonth);
+ document.getElementById('mesAtualLabel').textContent=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ document.getElementById('mesPagar').textContent=money(thisMonth);
+ document.getElementById('mesPago').textContent=money(monthPaid);
+ document.getElementById('mesTotal').textContent=money(monthTotal);
+ document.getElementById('mesPct').textContent=db.income?(monthTotal/db.income*100).toFixed(1)+'%':'—';
+ document.getElementById('mesStatus').textContent=thisMonth===0?'Em dia':'Há parcelas a pagar';
+ document.getElementById('fixasTotal').textContent=money(fixedTotal);
+
+ document.getElementById('sRestantes').textContent=pending.length;
+ document.getElementById('sImpacto').textContent=db.income?((thisMonth/db.income)*100).toFixed(1)+'%':'—';
+ let impact=db.income?(thisMonth/db.income*100):0, st=situation(impact);
+ document.getElementById('situacaoBadge').textContent=st.label;
+ document.getElementById('situacaoBadge').className='badge '+st.cls;
+ document.getElementById('situacaoTexto').textContent=st.text;
+ document.getElementById('situacaoBar').style.width=Math.min(100,impact)+'%';
+
+ document.getElementById('renda').value=db.income||'';
+ let sel=document.getElementById('cartao');sel.innerHTML=db.cards.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+ let months={};pending.forEach(x=>months[x.month]=(months[x.month]||0)+x.value);
+ document.getElementById('meses').innerHTML=Object.keys(months).sort().slice(0,12).map(k=>`<div class="monthrow"><span>${labelMonth(k)}</span><b>${money(months[k])}</b></div>`).join('')||'<span class="muted">Nenhuma parcela pendente.</span>';
+ let by={};pending.forEach(x=>by[x.p.id]=(by[x.p.id]||0)+x.value);
+ document.getElementById('limitesCartoes').innerHTML=db.cards.map(c=>{let v=all.filter(x=>x.p.cardId===c.id&&!x.paid).reduce((a,x)=>a+x.value,0);if(!c.limit)return `<div class="monthrow"><span>${esc(c.name)}</span><span class="muted">Limite não informado</span></div>`;let pct=v/c.limit*100;return `<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="monthrow" style="border:0;padding:0"><span><b>${esc(c.name)}</b></span><span><b>${money(Math.max(0,c.limit-v))}</b> disponível</span></div><div class="cardbar"><span style="width:${Math.min(100,pct)}%"></span></div><div class="muted" style="margin-top:4px">${money(v)} comprometido de ${money(c.limit)} (${pct.toFixed(0)}%)</div></div>`}).join('');
+ document.getElementById('porCartao').parentElement.classList.toggle('hidden',!db.settings.cardSummary);
+ document.getElementById('porCartao').innerHTML=db.cards.map(c=>{let v=all.filter(x=>x.p.cardId===c.id&&!x.paid).reduce((a,x)=>a+x.value,0);return `<div class="monthrow"><span>${esc(c.name)}</span><b>${money(v)}</b></div>`}).join('');
+ document.getElementById('listaCompras').innerHTML=db.purchases.map(p=>{
+   let ins=installments(p), paid=ins.filter(x=>x.paid).length, rest=ins.filter(x=>!x.paid).reduce((a,x)=>a+x.value,0), card=db.cards.find(c=>c.id===p.cardId);
+   return `<div class="purchase"><div class="phead"><div><h3>${esc(p.name)}</h3><div class="muted">${esc(card?.name||'Cartão removido')} • ${p.type==='fixa'?'🔁 Fixa mensal':money(p.total)+' • '+p.n+'x de '+money(p.total/p.n)}</div></div><button class="danger" onclick="removePurchase('${p.id}')">Excluir</button></div>
+   <div class="progress"><span style="width:${p.type==='fixa'?0:(paid/p.n*100)}%"></span></div><div class="muted">${p.type==='fixa'?'Despesa recorrente mensal • próximo mês também será considerado.':paid+'/'+p.n+' pagas • Restante: '+money(rest)}</div>
+   <div class="installments" style="margin-top:10px">${ins.slice(0,p.type==='fixa'?12:ins.length).map(x=>`<div class="inst ${x.paid?'paid':''}" onclick="togglePaid('${p.id}',${x.n-1})"><b>${x.paid?'✅':'⬜'} ${x.n}/${p.n}</b><span>${labelMonth(x.month)}<br>${money(x.value)}</span></div>`).join('')}</div>
+   ${p.obs?`<div class="muted" style="margin-top:10px">📝 ${esc(p.obs)}</div>`:''}</div>`;
+ }).join('')||'<div class="panel muted">Nenhuma compra cadastrada.</div>';
+ document.getElementById('listaCartoes').innerHTML=db.cards.map(c=>{let v=all.filter(x=>x.p.cardId===c.id&&!x.paid).reduce((a,x)=>a+x.value,0);let pct=c.limit?(v/c.limit*100):0;return `<div class="cardrow"><div style="flex:1"><b>${esc(c.name)}</b><div class="muted">Comprometido: ${money(v)} ${c.limit?'• Limite: '+money(c.limit):'• Sem limite informado'}</div>${c.limit?`<div class="cardbar"><span style="width:${Math.min(100,pct)}%"></span></div><div class="muted" style="margin-top:4px">${pct.toFixed(0)}% comprometido • disponível: ${money(Math.max(0,c.limit-v))}</div>`:''}</div><div class="actions"><button class="secondary" onclick="editCard('${c.id}')">Editar</button><button class="danger" onclick="removeCard('${c.id}')">Excluir</button></div></div>`}).join('');
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function addCard(e){e.preventDefault();db.cards.push({id:crypto.randomUUID(),name:document.getElementById('novoCartao').value,limit:Number(document.getElementById('limite').value||0)});e.target.reset();save();}
+function editCard(id){
+ const c=db.cards.find(x=>x.id===id); if(!c)return;
+ const name=prompt('Nome do cartão:',c.name); if(name===null)return;
+ const lim=prompt('Limite do cartão (R$):',c.limit||''); if(lim===null)return;
+ c.name=name.trim()||c.name; c.limit=Number(String(lim).replace(',','.'))||0; save();
+}
+function situation(v){
+ if(!db.income)return {label:'Sem dados',text:'Informe sua renda mensal nas configurações.',cls:''};
+ if(v<=20)return {label:'Confortável',text:'O comprometimento atual está dentro de uma faixa confortável.',cls:'status-ok'};
+ if(v<=30)return {label:'Atenção',text:'As parcelas já merecem acompanhamento mais próximo.',cls:'status-att'};
+ if(v<=40)return {label:'Elevado',text:'Uma parte relevante da renda já está comprometida.',cls:'status-high'};
+ return {label:'Alto',text:'O comprometimento está elevado. Evite assumir novas parcelas sem planejamento.',cls:'status-danger'};
+}
+function removeCard(id){if(db.purchases.some(p=>p.cardId===id)){alert('Este cartão possui compras cadastradas. Remova ou altere essas compras antes de excluir o cartão.');return}db.cards=db.cards.filter(c=>c.id!==id);save();}
+function addPurchase(e){e.preventDefault();let p={id:crypto.randomUUID(),name:document.getElementById('nome').value,cardId:document.getElementById('cartao').value,total:Number(document.getElementById('valor').value),n:Number(document.getElementById('nparc').value),first:document.getElementById('primeira').value,day:Number(document.getElementById('dia').value),type:document.getElementById('tipo').value,obs:document.getElementById('obs').value,paid:{}};db.purchases.push(p);e.target.reset();document.getElementById('nparc').value=10;document.getElementById('dia').value=10;save();}
+function removePurchase(id){if(confirm('Excluir esta compra e todo o histórico de parcelas?')){db.purchases=db.purchases.filter(p=>p.id!==id);save();}}
+function togglePaid(id,i){let p=db.purchases.find(p=>p.id===id);p.paid=p.paid||{};p.paid[i]=!p.paid[i];save();}
+function saveIncome(e){e.preventDefault();db.income=Number(document.getElementById('renda').value||0);save();alert('Renda mensal atualizada.');}
+function show(id,btn){document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+loadSettingsUI(); render();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
